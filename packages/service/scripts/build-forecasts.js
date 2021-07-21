@@ -17,11 +17,13 @@ const locations = [
   },
 ]
 
+const averageWeather = ['rain', 'clear', 'snow']
+
 function createWeeklyData() {
   const current = new Date().setHours(0, 0, 0, 0)
   const dates = []
 
-  for (let day = -1; day < 7; day++) {
+  for (let day = 0; day < 14; day++) {
     dates.push(addDays(current, day))
   }
 
@@ -41,7 +43,7 @@ function createHourlyData(date) {
 function createWeatherData(hour) {
   return {
     time: hour,
-    temp: faker.datatype.number({ min: 0, max: 35 }),
+    temp: faker.datatype.number({ min: 8, max: 35 }),
     fells_like: faker.datatype.number({ min: 12, max: 35 }),
     temp_min: faker.datatype.number({ min: 8, max: 25 }),
     temp_max: faker.datatype.number({ min: 25, max: 35 }),
@@ -61,9 +63,9 @@ function generate() {
       data.push({
         date,
         location,
-        rain: faker.datatype.boolean(),
-        snow: faker.datatype.boolean(),
-        weather: hours.map(hour => createWeatherData(hour)),
+        weather:
+          averageWeather[Math.floor(Math.random() * averageWeather.length)],
+        weatherHourly: hours.map(hour => createWeatherData(hour)),
       })
     })
   })

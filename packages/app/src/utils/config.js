@@ -14,6 +14,23 @@ export const queryClient = new QueryClient({
   },
 })
 
+export const weatherStatus = {
+  sun: 'sun',
+  moon: 'moon',
+  rain: 'rain',
+  snow: 'snow',
+}
+
+export const periods = {
+  day: 'day',
+  night: 'night',
+}
+
+export const getPeriod = hour => {
+  if (hour >= 6 && hour < 18) return periods.day
+  else return periods.night
+}
+
 export const FORMAT_DATE = "yyyy-MM-dd'T'HH:mm:ss'Z'"
 
 export const prefixedCities = ['Florianópolis', 'Zaragoza', 'London']

@@ -1,85 +1,119 @@
 import styled from 'styled-components'
 import { useForecastContext } from 'context/forecast'
-import DayCard from 'organism/DayCard'
+import Search from './Search'
+import DayCard from 'atoms/DayCard'
+import Title from 'atoms/Title'
+import BaseGrid from 'atoms/Grid'
+import Loading from 'atoms/Loading'
+import NotFound from 'atoms/NotFound'
 
 import format from 'date-fns/format'
 import isToday from 'date-fns/isToday'
 import getHours from 'date-fns/getHours'
 import addHours from 'date-fns/addHours'
 import isEqual from 'date-fns/isEqual'
-import { FORMAT_DATE } from 'utils/config'
+import { FORMAT_DATE, getPeriod, periods, weatherStatus } from 'utils/config'
 
 const Root = styled.div`
   width: 100%;
-  grid-template-columns: minmax(80px, 170px) minmax(80px, 170px);
-  grid-template-rows: auto;
-  column-gap: 14px;
-  row-gap: 14px;
-  display: grid;
-  grid-template-areas:
-    'today today'
-    '2 3'
-    '4 5'
-    '6 7';
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `
 
-function resolveForecasts({ location, date: dateProp, weather, _id }) {
-  const date = new Date(dateProp).setHours(0, 0, 0, 0)
-  const today = isToday(date)
-  const dayWeek = format(date, 'ccc')
-  const dayMonth = format(date, 'LLL dd')
+const Grid = styled(BaseGrid)`
+  grid-template-columns: minmax(80px, 170px) minmax(80px, 170px);
+  grid-template-areas:
+    'today today'
+    '2 3';
+`
 
-  let temp, min, max
+function mapWeeklyForecasts(forecasts = []) {
+  return forecasts.map(forecast => {
+    const {
+      location,
+      date,
+      weather: weatherProp,
+      weatherHourly,
+      _id,
+    } = forecast
 
-  if (today) {
-    const current = format(addHours(date, getHours(new Date())), FORMAT_DATE, {
-      timeZone: 'UTC',
-    })
+    const dateNow = new Date(date).setHours(0, 0, 0, 0)
+    const today = isToday(dateNow)
+    let title = format(dateNow, 'ccc')
+    let subtitle = format(dateNow, 'LLL dd')
 
-    const currentWeather = weather.find(w =>
-      isEqual(new Date(w.time), new Date(current)),
-    )
-    temp = currentWeather?.temp
-  } else {
-    min = Math.min(...weather.map(w => w.temp_min))
-    max = Math.max(...weather.map(w => w.temp_max))
-  }
+    let temp,
+      min,
+      period,
+      weather = weatherProp === 'clear' ? weatherStatus.sun : weatherProp
 
-  return {
-    key: _id,
-    date: format(date, 'yyyy-MM-dd'),
-    temp,
-    min,
-    max,
-    dayWeek,
-    dayMonth,
-    today,
-    location: location?.city,
-  }
+    if (today) {
+      const currentHour = getHours(new Date())
+
+      title = getPeriod(currentHour) === periods.day ? 'Today' : 'Tonight'
+      subtitle = format(new Date(), 'LLL dd HH:mm')
+
+      if (
+        weather === weatherStatus.sun &&
+        getPeriod(currentHour) === periods.night
+      ) {
+        weather = weatherStatus.moon
+      }
+
+      const current = format(addHours(dateNow, currentHour), FORMAT_DATE, {
+        timeZone: 'UTC',
+      })
+
+      const currentWeather = weatherHourly.find(w =>
+        isEqual(new Date(w.time), new Date(current)),
+      )
+
+      temp = currentWeather?.temp
+    } else {
+      min = Math.min(...weatherHourly.map(w => w.temp_min))
+      const sum = weatherHourly.reduce((prev, curr) => prev + curr.temp, 0)
+      temp = Math.round(sum / weatherHourly.length) || 0
+    }
+
+    return {
+      id: _id,
+      date,
+      period,
+      temp,
+      min,
+      title,
+      subtitle,
+      today,
+      location,
+      weather,
+    }
+  })
 }
 
 const WeekForecast = () => {
-  const { search } = useForecastContext()
+  const { search, city } = useForecastContext()
 
-  const { isIdle, isLoading, forecasts } = search
-
-  if (isIdle) {
-    return null
-  }
-
-  if (isLoading || !forecasts) {
-    return (
-      <Root>
-        <p>Loading...</p>
-      </Root>
-    )
-  }
+  const { isLoading, forecasts } = search
 
   return (
     <Root>
-      {forecasts.map(resolveForecasts).map(props => (
-        <DayCard {...props} />
-      ))}
+      <Search />
+      {city && <Title>{city}</Title>}
+
+      {isLoading ? (
+        <Root>
+          <Loading />
+        </Root>
+      ) : forecasts.length ? (
+        <Grid>
+          {mapWeeklyForecasts(forecasts).map(({ id, ...rest }) => (
+            <DayCard key={id} id={id} {...rest} />
+          ))}
+        </Grid>
+      ) : (
+        city && <NotFound>Forecast not found</NotFound>
+      )}
     </Root>
   )
 }

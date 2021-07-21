@@ -1,15 +1,20 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import './index.css'
 import App from 'App'
+import ErrorMessage from 'atoms/ErrorMessage'
+import { ErrorBoundary } from 'react-error-boundary'
 import { Providers } from 'context'
 import reportWebVitals from './reportWebVitals'
+import GlobalStyle from 'GlobalStyle'
 
 ReactDOM.render(
   <React.StrictMode>
-    <Providers>
-      <App />
-    </Providers>
+    <GlobalStyle />
+    <ErrorBoundary FallbackComponent={ErrorMessage}>
+      <Providers>
+        <App />
+      </Providers>
+    </ErrorBoundary>
   </React.StrictMode>,
   document.getElementById('root'),
 )

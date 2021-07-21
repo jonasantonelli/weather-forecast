@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import ForecastModel from './forecast-model'
-import forecastFixtures from '../__fixtures__/forecast.json'
+import forecastFixtures from '../fixtures/forecast.json'
 import config from '../config'
 
 async function connectDB() {
@@ -10,7 +10,7 @@ async function connectDB() {
       useFindAndModify: false,
       useUnifiedTopology: true,
     })
-    console.log('MongoDB Connected...')
+    console.log('MongoDB Connected!')
 
     if (process.env.SEED === 'forecast') {
       seedForecast()
@@ -24,8 +24,10 @@ async function connectDB() {
 
 async function seedForecast() {
   await ForecastModel.deleteMany()
-  await ForecastModel.insertMany(forecastFixtures)
-  console.log('MongoDB Forecast Collection seeded...')
+  if (forecastFixtures) {
+    await ForecastModel.insertMany(forecastFixtures)
+  }
+  console.log('Collection seeded!')
 }
 
 export { connectDB, mongoose as default }

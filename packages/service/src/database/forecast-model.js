@@ -1,8 +1,6 @@
 import addDays from 'date-fns/addDays'
 import startOfDay from 'date-fns/startOfDay'
 import endOfDay from 'date-fns/endOfDay'
-import format from 'date-fns/format'
-
 import mongoose from './index'
 
 const ForecastSchema = new mongoose.Schema({
@@ -11,9 +9,8 @@ const ForecastSchema = new mongoose.Schema({
     city: { type: String, required: true },
     country: { type: String, required: true },
   },
-  rain: Boolean,
-  snow: Boolean,
-  weather: [
+  weather: String,
+  weatherHourly: [
     {
       time: { type: Date, required: true },
       temp: { type: Number, required: true },
@@ -29,15 +26,13 @@ const ForecastSchema = new mongoose.Schema({
 
 const ForecastModel = mongoose.model('Forecast', ForecastSchema, 'forecast')
 
-const list = ({
-  location,
-  from = startOfDay(new Date()),
-  to = addDays(endOfDay(new Date()), 7),
-}) => {
+const getWeeklyByLocation = ({ location, date = startOfDay(new Date()) }) => {
   const aggregation = [{ $sort: { date: 1 } }]
   const match = {}
 
-  match.date = { $gte: from, $lte: to }
+  const to = addDays(endOfDay(date), 6)
+
+  match.date = { $gte: date, $lte: to }
 
   if (location) {
     match['location.city'] = { $regex: new RegExp(location, 'i') }
@@ -46,6 +41,10 @@ const list = ({
   aggregation.push({ $match: match })
 
   return ForecastModel.aggregate(aggregation)
+}
+
+const getAll = () => {
+  return ForecastModel.find()
 }
 
 const remove = id => {
@@ -61,4 +60,4 @@ const save = payload => {
   }).save()
 }
 
-export { ForecastModel as default, list, remove, save }
+export { ForecastModel as default, getAll, getWeeklyByLocation, remove, save }

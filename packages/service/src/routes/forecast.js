@@ -1,5 +1,10 @@
 import express from 'express'
-import { list, save, remove } from '../database/forecast-model'
+import {
+  getWeeklyByLocation,
+  getAll,
+  save,
+  remove,
+} from '../database/forecast-model'
 import validator from '../middlewares/validator'
 import { bodyMetadataSchema } from '../schemas/forecast'
 
@@ -7,8 +12,26 @@ function getForecastRouter() {
   const router = express.Router()
   router.post('/', post, validator.body(bodyMetadataSchema))
   router.get('/', get)
+  router.get('/weekly', weekly)
   router.delete('/', deleteAll)
   return router
+}
+
+async function weekly(req, res) {
+  try {
+    let forecasts,
+      error = false
+
+    forecasts = await getWeeklyByLocation(req.query)
+
+    if (forecasts && forecasts.length) {
+      return res.status(200).send(forecasts)
+    } else {
+      return res.status(error ? 500 : 404).send('not found')
+    }
+  } catch (e) {
+    return res.status(400).json(e)
+  }
 }
 
 async function get(req, res) {
@@ -16,9 +39,9 @@ async function get(req, res) {
     let forecasts,
       error = false
 
-    forecasts = await list(req.query)
+    forecasts = await getAll()
 
-    if (forecasts) {
+    if (forecasts && forecasts.length) {
       return res.status(200).send(forecasts)
     } else {
       return res.status(error ? 500 : 404).send('not found')
@@ -29,12 +52,13 @@ async function get(req, res) {
 }
 
 async function post(req, res) {
-  const { date, location, weather } = req.body
+  const { date, location, weather, weatherHourly } = req.body
 
   const savedModel = await save({
     date,
     location,
     weather,
+    weatherHourly,
   })
 
   return res.status(200).json(savedModel)

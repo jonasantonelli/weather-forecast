@@ -2,14 +2,15 @@ import joi from 'joi'
 
 const bodyMetadataSchema = () =>
   joi.object({
-    date: joi.string().required(),
+    date: joi.date().required(),
     location: joi.object({
       city: joi.string().required(),
       country: joi.string().required(),
     }),
-    weather: joi.array().items(
+    weather: joi.string(),
+    weatherHourly: joi.array().items(
       joi.object({
-        time: joi.string().required(),
+        time: joi.date().required(),
         temp: joi.number(),
         fells_like: joi.number(),
         temp_min: joi.number(),

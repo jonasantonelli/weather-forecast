@@ -2,52 +2,45 @@ import styled from 'styled-components'
 import TextField from '@material-ui/core/TextField'
 import { useHistory } from 'react-router-dom'
 
-import { makeStyles } from '@material-ui/core/styles'
-
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import { prefixedCities } from 'utils/config'
 import { useForecastContext } from 'context/forecast'
 
-const useStyles = makeStyles(() => ({
-  root: {
-    width: 300,
-    margin: 'auto',
-    fontSize: 14,
-  },
-  input: {
-    color: 'var(--color-secondary)',
-  },
-}))
-
 const Root = styled.div`
-  margin: 40px auto 20px;
+  margin: 30px auto 0;
+
+  .MuiAutocomplete-root {
+    width: 300px;
+    margin: auto;
+    font-size: 14px;
+  }
 
   .MuiIconButton-root,
   .MuiFormLabel-root {
-    color: var(--color-secondary);
+    color: var(--secondary-color);
   }
 
   .MuiFormLabel-root.Mui-focused {
-    color: var(--color-secondary);
+    color: var(--secondary-color);
   }
 
   .MuiInputBase-root {
+    color: var(--secondary-color);
     border-radius: 8px;
     outline: none;
   }
 
   .MuiOutlinedInput-notchedOutline,
   .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
-    border-color: var(--color-tertiary);
+    border-color: var(--tertiary-color);
   }
 
   .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-    border-color: var(--color-tertiary);
+    border-color: var(--tertiary-color);
   }
 `
 
 const Search = () => {
-  const classes = useStyles()
   const { city, setCity } = useForecastContext()
   const history = useHistory()
 
@@ -61,10 +54,6 @@ const Search = () => {
         id="combo-box-cities"
         options={prefixedCities}
         value={city}
-        classes={{
-          root: classes.root,
-          input: classes.input,
-        }}
         onChange={handleChange}
         renderInput={params => (
           <TextField {...params} label="Search for city" variant="outlined" />
