@@ -50,13 +50,13 @@ curl --location --request GET 'http://localhost:9000/forecast'
 Used to get weekly forecasts filtering by location
 
 ```bash
-curl --location --request GET 'http://localhost:9000/forecast?location=Florianópolis'
+curl --location --request GET 'http://localhost:9000/forecast?location=London'
 ```
 
 Filtering by date
 
 ```bash
-curl --location --request GET 'http://localhost:9000/forecast/weekly?location=Florianópolis&date=2021-07-23'
+curl --location --request GET 'http://localhost:9000/forecast/weekly?location=London&date=2021-07-23'
 ```
 
 ##### `POST`
@@ -72,7 +72,7 @@ curl --location --request POST 'http://localhost:9000/forecast' \
     "weather": "snow",
     "weatherHourly": [
       {
-        "time": "2021-07-19T00:00:00Z",
+        "time": "2021-07-22T00:00:00Z",
         "temp": 32,
         "fells_like": 23,
         "temp_min": 9,
