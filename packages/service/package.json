@@ -39,13 +39,12 @@
     "eslint-plugin-prettier": "^3.4.0",
     "faker": "^5.5.3",
     "nodemon": "^2.0.12",
-    "npm-run-all": "^4.1.5",
     "prettier": "^2.3.2"
   },
   "scripts": {
+    "prestart": "yarn data",
     "data": "node ./scripts/build-forecasts.js > ./src/fixtures/forecast.json",
-    "dev": "node .",
-    "start": "yarn data && SEED=forecast node .",
+    "start": "node .",
     "build": "babel --delete-dir-on-start --out-dir build --copy-files --ignore \"**/__tests__/**,**/__mocks__/**\" --no-copy-ignored src"
   }
 }

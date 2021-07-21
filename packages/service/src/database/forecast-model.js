@@ -47,10 +47,7 @@ const getAll = () => {
   return ForecastModel.find()
 }
 
-const remove = id => {
-  if (id) {
-    return ForecastModel.deleteOne({ _id: id })
-  }
+const remove = () => {
   return ForecastModel.deleteMany()
 }
 

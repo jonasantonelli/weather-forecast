@@ -1,12 +1,26 @@
 version: '3'
 
 services:
-  mongodb:
+  app:
+    env_file:
+      - .env
+    container_name: weather-forecast-service
+    build:
+      dockerfile: ./Dockerfile
+      context: ./
+    volumes:
+      - ./:/var/app
+      - /var/app/node_modules
+    ports:
+      - '9000:9000'
+    depends_on:
+      - database
+    links:
+      - database
+
+  database:
+    container_name: weather-forecast-db
     image: mongo:latest
-    restart: always
-    environment:
-      - MONGO_HOST=mongo
-      - MONGO_INITDB_DATABASE=weather-forecast
     volumes:
       - ./mongo/data:/data/db
     ports:

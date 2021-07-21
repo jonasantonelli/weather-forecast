@@ -1,4 +1,4 @@
-const faker = require('faker/locale/en')
+const faker = require('faker')
 const format = require('date-fns/format')
 const addDays = require('date-fns/addDays')
 

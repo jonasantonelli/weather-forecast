@@ -2,7 +2,6 @@ import express from 'express'
 // this is all it takes to enable async/await for express middleware
 import 'express-async-errors'
 import cors from 'cors'
-import logger from 'loglevel'
 import errorMiddleware from './middlewares/error'
 
 import config from './config'

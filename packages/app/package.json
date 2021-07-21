@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "license": "UNLICENSED",
   "private": true,
-  "proxy": "http://localhost:5150",
   "dependencies": {
     "@material-ui/core": "^4.12.1",
     "@material-ui/lab": "^4.0.0-alpha.60",
@@ -21,6 +20,7 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
+    "preinstall": "cp .env.example .env",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -43,6 +43,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {}
+  }
 }
