@@ -24,7 +24,8 @@ function createWeeklyData() {
   const dates = []
 
   for (let day = 0; day < 14; day++) {
-    dates.push(addDays(current, day))
+    const date = addDays(current, day)
+    dates.push(format(date, "yyyy-MM-dd'T'HH:mm:ss'Z'"))
   }
 
   return dates

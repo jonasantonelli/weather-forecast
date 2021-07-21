@@ -26,13 +26,28 @@ const ForecastSchema = new mongoose.Schema({
 
 const ForecastModel = mongoose.model('Forecast', ForecastSchema, 'forecast')
 
-const getWeeklyByLocation = ({ location, date = startOfDay(new Date()) }) => {
+function formatTimezone(date) {
+  return format(date, "yyyy-MM-dd'T'HH:mm:ss'Z'", {
+    timeZoner: 'UTC',
+  })
+}
+
+const getWeeklyByLocation = ({ location, date }) => {
   const aggregation = [{ $sort: { date: 1 } }]
   const match = {}
+  let from
 
-  const to = addDays(endOfDay(date), 6)
+  if (!date) {
+    from = startOfDay(new Date())
+  } else {
+    from = startOfDay(new Date(date))
+  }
 
-  match.date = { $gte: date, $lte: to }
+  const to = addDays(endOfDay(from), 6)
+
+  console.log(from, to, location)
+
+  match.date = { $gte: from, $lte: to }
 
   if (location) {
     match['location.city'] = { $regex: new RegExp(location, 'i') }

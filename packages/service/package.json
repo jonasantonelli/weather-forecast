@@ -42,6 +42,7 @@
     "prettier": "^2.3.2"
   },
   "scripts": {
+    "preinstall": "cp .env.example .env",
     "prestart": "yarn data",
     "data": "node ./scripts/build-forecasts.js > ./src/fixtures/forecast.json",
     "start": "node .",

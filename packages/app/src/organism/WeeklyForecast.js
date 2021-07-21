@@ -10,6 +10,7 @@ import NotFound from 'atoms/NotFound'
 import format from 'date-fns/format'
 import isToday from 'date-fns/isToday'
 import getHours from 'date-fns/getHours'
+import parseISO from 'date-fns/parseISO'
 import addHours from 'date-fns/addHours'
 import isEqual from 'date-fns/isEqual'
 import { FORMAT_DATE, getPeriod, periods, weatherStatus } from 'utils/config'
@@ -37,11 +38,15 @@ function mapWeeklyForecasts(forecasts = []) {
       weatherHourly,
       _id,
     } = forecast
+    const currentHour = getHours(new Date())
+    const current = format(addHours(parseISO(date), currentHour), FORMAT_DATE)
 
-    const dateNow = new Date(date).setHours(0, 0, 0, 0)
-    const today = isToday(dateNow)
-    let title = format(dateNow, 'ccc')
-    let subtitle = format(dateNow, 'LLL dd')
+    const currentParsed = parseISO(current)
+
+    const today = isToday(currentParsed)
+
+    let title = format(currentParsed, 'ccc')
+    let subtitle = format(currentParsed, 'LLL dd')
 
     let temp,
       min,
@@ -49,8 +54,6 @@ function mapWeeklyForecasts(forecasts = []) {
       weather = weatherProp === 'clear' ? weatherStatus.sun : weatherProp
 
     if (today) {
-      const currentHour = getHours(new Date())
-
       title = getPeriod(currentHour) === periods.day ? 'Today' : 'Tonight'
       subtitle = format(new Date(), 'LLL dd HH:mm')
 
@@ -60,10 +63,6 @@ function mapWeeklyForecasts(forecasts = []) {
       ) {
         weather = weatherStatus.moon
       }
-
-      const current = format(addHours(dateNow, currentHour), FORMAT_DATE, {
-        timeZone: 'UTC',
-      })
 
       const currentWeather = weatherHourly.find(w =>
         isEqual(new Date(w.time), new Date(current)),

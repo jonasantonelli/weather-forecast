@@ -79,8 +79,6 @@ const HourlyForecast = () => {
   const today = new Date(current.date).setHours(0, 0, 0, 0)
   const title = format(today, 'eeee')
 
-  console.log(current)
-
   return (
     <Root>
       <Header>

@@ -18,17 +18,6 @@ Installing all dependencies:
 yarn install
 ```
 
-## Application
-
-Go the app package to run the application
-
-```bash
-cd packages/app
-yarn start
-```
-
-The application is available on `http://localhost:3000`
-
 ## API
 
 ### Running
@@ -42,13 +31,13 @@ docker-compose up --build
 
 By default the database will be seeded, use the `.env` to avoid this step
 
-### Using
+### Routes
 
 The API is available on `http://localhost:9000`
 
 #### `/forecast`
 
-##### Get
+##### `GET`
 
 Used to get all forecasts
 
@@ -56,21 +45,21 @@ Used to get all forecasts
 curl --location --request GET 'http://localhost:9000/forecast'
 ```
 
-##### Get Weekly
+##### `GET` Weekly
 
-Used to get weekly forecasts filtering by location and current date
-
-```bash
-curl --location --request GET 'http://localhost:9000/forecasts?location=Florianópolis'
-```
-
-Filtering by custom date
+Used to get weekly forecasts filtering by location
 
 ```bash
-curl --location --request GET 'http://localhost:9000/forecasts?location=Florianópolis&date='
+curl --location --request GET 'http://localhost:9000/forecast?location=Florianópolis'
 ```
 
-##### Post
+Filtering by date
+
+```bash
+curl --location --request GET 'http://localhost:9000/forecast/weekly?location=Florianópolis&date=2021-07-23'
+```
+
+##### `POST`
 
 Used to create a new forecast
 
@@ -96,7 +85,7 @@ curl --location --request POST 'http://localhost:9000/forecast' \
   }'
 ```
 
-##### Delete
+##### `DELETE`
 
 Used to delete all forecasts
 
@@ -104,9 +93,16 @@ Used to delete all forecasts
 curl --location --request DELETE 'http://localhost:9000/forecast'
 ```
 
-#####
+## Web Application
 
+Go the app package to run the application
 
+```bash
+cd packages/app
+yarn start
+```
+
+The application is available on `http://localhost:3000`
 
 ## Build packages for production
 
